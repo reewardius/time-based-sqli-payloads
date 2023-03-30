@@ -6,7 +6,7 @@ sqliTime()
 {
 for i in $(cat ~/.path/To/payloads) ; do
   cat $1 | qsreplace "$i" > sqli
-  ffuf -u FUZZ -w sqli -s -ft "<15000" | tee -a vulnSqli.txt
+  ffuf -u FUZZ -w sqli -s -ft ">15000" | tee -a vulnSqli.txt
   rm sqli
 done
 }
